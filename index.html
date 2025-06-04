@@ -87,6 +87,14 @@
     </section>
   </main>
 
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
+  <script>
+    window.TrackJS && TrackJS.install({ 
+      token: "a5b66f2c08314f448c6b161c94f0fa8b"
+      // for more configuration options, see https://docs.trackjs.com
+    });
+  </script>
+
   <script>
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
@@ -95,13 +103,128 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+
+      try {
+        if (operator === '/' && parseFloat(secondNum) === 0) {
+          throw new CalculationError("Cannot divide by zero");
+        }
+        let result = eval(`${firstNum} ${operator} ${secondNum}`);
+        output.innerHTML = result;
+      } catch (error) {
+        alert(error.message);
+      } finally {
+        console.log('Calculation attempted');
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    // Sample data for demonstrations
+
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.log("Message:", message);
+      console.log("Source:", source);
+      console.log("Line:", lineno);
+      console.log("Column:", colno);
+      console.log("Error Object:", error); 
+    };
+
+    const tableData = [
+      { name: "Alice", age: 25, role: "Developer" },
+      { name: "Bob", age: 36, role: "Designer" },
+      { name: "Charlie", age: 27, role: "Manager" }
+    ];
+
+    let countLabel = "Count Button";
+    let assertCounter = 5;
+
+    class CalculationError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "CalculationError";
+      }
+    }
+
+    // Add event listeners to each button
+    errorBtns.forEach((btn, index) => {
+      btn.addEventListener('click', () => {
+        switch(index) {
+          case 0:
+            console.log("console log demo");
+            break;
+
+          case 1: 
+            console.error("console error demo");
+            break;
+
+          case 2:
+            console.count(countLabel);
+            break;
+
+          case 3: 
+            console.warn("console warn demo");
+            break;
+
+          case 4: 
+            assertCounter++;
+            console.assert(assertCounter < 3, "Counter should be less than 3!", { counter: assertCounter });
+            break;
+
+          case 5: 
+            console.clear();
+            break;
+
+          case 6:
+            console.dir(errorBtns[0]);
+            break;
+
+          case 7: 
+            console.dirxml(errorBtns[0]);
+            break;
+
+          case 8: 
+            console.group("console.group");
+            break;
+
+          case 9: 
+            console.groupEnd();
+            console.log("Groups have been closed");
+            break;
+
+          case 10: 
+            console.table(tableData);
+            break;
+
+          case 11: 
+            console.time("Demo Timer");
+            break;
+
+          case 12: 
+            console.timeEnd("Demo Timer");
+            break;
+
+          case 13: 
+            function demoFunction() {
+              function nestedFunction() {
+                console.trace("console trace");
+              }
+              nestedFunction();
+            }
+            demoFunction();
+            break;
+
+          case 14: // Trigger a Global Error
+            setTimeout(() => {
+              console.log("an error happened");
+              undefinedVariable.someProperty = "This will cause an error";
+            }, 100);
+            break;
+        }
+      });
+    });
+    
   </script>
 </body>
 
